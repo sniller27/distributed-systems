@@ -8,14 +8,15 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script>
-		$(document).ready(function(){
-			//artist and artist array
 			var artists = [];
 			var artist;
+		$(document).ready(function(){
+			//artist and artist array
+			var artistname, artistbplace, artistbday, artistfavorite;
 
 			//quick client side validation
 			function validateArtist(){
-				if (!$('#artistnamefield').val()) {
+				if (!artistname) {
 					return false;
 				}else {
 					return true;
@@ -24,14 +25,63 @@
 
 			//add new artist function
 		    $("#addartistform").submit(function(){
+		    	artistname = $('#artistnamefield').val();
+		    	artistbplace = $('#artistbirthplacefield').val();
+		    	artistbday = $('#artistbirthdatefield').val();
+		    	artistfavorite = $('#artistfavoritecheckbox').is(':checked');
+				
 				if (validateArtist()) {
+					var favoritebool = artistfavorite ? true : false;
 
-			    	// artist = $('#artistnamefield').val();
-			    	artist = {name:"John", birthPlace:"Doe", birthDate:"asd", favoriteArtist:"blue"};
-			    	console.log(artist);
-			        //artists.push(artist);
-				    $("#artistlist").append("<li>" + artist + "</li>");
-				    console.log("added");
+					//generate artist ID
+					var genid = artists.length + 1;
+
+			    	artist = {
+			    		id: genid,
+			    		name:artistname, 
+			    		birthPlace:artistbplace, 
+			    		birthDate:artistbday, 
+			    		favoriteArtist:favoritebool
+			    	};
+
+			    	//add to array
+			        artists.push(artist);
+
+			        //add to list
+				    // $("#artistlist").append("<tr>" + artist.name + "</tr>");
+				    // $("#artistlist").find(tbody).append( "<tr><td>aaaa</td></tr>" );
+
+				    //UPDATE TABLE
+				    var tabledata = "";
+				 //    for (var property in artist) {
+					//     if (artist.hasOwnProperty(property)) {
+					//     	console.log(artist);
+					//         tabledata += "<td>"+artist.property+"</td>";
+					//     }
+					// }
+					for (var i = artists.length - 1; i >= 0; i--) {
+						console.log("new one");
+						tabledata += "<tr>";
+						// for (var property in artists[i]) {
+						//     if (artists[i].hasOwnProperty(property)) {
+						//     	console.log("atribut");
+						//         tabledata += "<td>"+artists[i].property+"</td>";
+						//     }
+						// }
+						// for (var j = Object.keys(artists[i]).length - 1; j >= 0; j--){
+						// 	console.log(artists[i].name);
+						// 	tabledata += "<td>"+artists[i].name+"</td>"
+						// }
+						for (var key in artists[i]) {
+						  if (artists[i].hasOwnProperty(key)) {
+						    // console.log(key + " -> " + artists[i][key]);
+						    tabledata += "<td>"+artists[i][key]+"</td>";
+						  }
+						}
+						tabledata += "</tr>";
+					}
+				    $("#artistlist tbody").html(tabledata);
+				    console.log(JSON.stringify(artists));
 				    return false;
 
 				}
@@ -46,18 +96,47 @@
 			<div class="col-sm-6">
 				<form action="" id="addartistform">
 					<h2>Add new artist:</h2>
+
 					<div class="form-group">
-						<label for="artistnamefield">Email address:</label>
+						<label for="artistnamefield">Artist name:</label>
 						<input type="text" class="form-control" id="artistnamefield">
 					</div>
+					<div class="form-group">
+						<label for="artistbirthplacefield">Artist birthplace:</label>
+						<input type="text" class="form-control" id="artistbirthplacefield">
+					</div>
+					<div class="form-group">
+						<label for="artistbirthdatefield">Artist birthdate:</label>
+						<input type="date" class="form-control" id="artistbirthdatefield">
+					</div>
+					<div class="checkbox">
+						<label><input type="checkbox" value="" id="artistfavoritecheckbox">Favorite artist</label>
+					</div>
+
 					<input type="submit" value="Add artist" class="btn btn-success">
 				</form>
 			</div>			
 			<div class="col-sm-6">
 				<h2>List of artists:</h2>
-				<ul id="artistlist">
-					
-				</ul>
+				<div class="form-group">
+					<label for="artistnamefield">Artist name:</label>
+					<input type="text" class="form-control" id="artistnamefield" placeholder="Search">
+				</div>
+				<!-- <ul id="artistlist"></ul> -->
+				<table class="table" id="artistlist">
+					<thead>
+						<tr>
+							<th>Artist ID:</th>
+							<th>Artist name:</th>
+							<th>Artist birthplace:</th>
+							<th>Artist birthdate:</th>
+							<th>Favorite artist:</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
 			</div>			
 		</div>
 	</div>
