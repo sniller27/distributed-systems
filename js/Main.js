@@ -1,6 +1,4 @@
 $(document).ready(function(){
-	//GLOBAL VARIABLES
-	var artists = [];
 
 	//artist search field
 	var artistsearch = '#artistsearch';
@@ -46,33 +44,17 @@ $(document).ready(function(){
 
 	//NEW ARTIST (client-side)
     $("#addartistform").submit(function(){
-    	artistname = $('#artistnamefield').val();
+    	var artistname = $('#artistnamefield').val();
     	var artistbplace = $('#artistbirthplacefield').val();
     	var artistbday = $('#artistbirthdatefield').val();
     	var artistfavorite = $('#artistfavoritecheckbox').is(':checked');
 		
-
-			var favoritebool = artistfavorite ? true : false;
-
-			//generate artist ID
-			var genid = artists.length + 1;
-
-			//could also have been an instance of a class?
-	    	var artist = {
-	    		id: genid,
-	    		name:artistname, 
-	    		birthPlace:artistbplace, 
-	    		birthDate:artistbday, 
-	    		favoriteArtist:favoritebool
-	    	};
-
-	    	//add to array
-	        artists.push(artist);
-
-	        //update table
+			//getting variables by passing parameters
+	        artistdata(artistname, artistbplace, artistbday, artistfavorite);
+		    
+		    //let this one stay here for now since I don't know if it's possible to pass a function.
 		    updateTable(artists, artisttabletbody);
 
-		    console.log(JSON.stringify(artists));
 		    //return prevents site reload
 		    return false;
 		
