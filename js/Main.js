@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+	
 	//artist search field
 	var artistsearch = '#artistsearch';
 	var artisttabletbody = '#artisttable tbody';
@@ -50,10 +50,13 @@ $(document).ready(function(){
     	var artistfavorite = $('#artistfavoritecheckbox').is(':checked');
 		
 			//getting variables by passing parameters
-	        artistdata(artistname, artistbplace, artistbday, artistfavorite);
-		    
+	        // artistdata(artistname, artistbplace, artistbday, artistfavorite);
+		    var artist = new Artist(artistname, artistbplace, artistbday, artistfavorite);
+		    artist.addArtist();
+		    console.log(artist);
+		    console.log("get artists: " + artist.getArtists());
 		    //let this one stay here for now since I don't know if it's possible to pass a function.
-		    updateTable(artists, artisttabletbody);
+		    updateTable(artist.getArtists(), artisttabletbody);
 
 		    //return prevents site reload
 		    return false;
