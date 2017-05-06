@@ -7,7 +7,10 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.js"></script>
+	
+	<!-- own scripts -->
+	<link rel="stylesheet" href="css/Style.css">
 	<script src="js/Main.js"></script>
 	<script src="js/ArtistHandler.js"></script>
 
@@ -16,20 +19,24 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-6">
-				<form action="" id="addartistform">
+				<!-- form -->
+				<form id="addartistform" role="form">
 					<h2>Add new artist:</h2>
 
 					<div class="form-group">
 						<label for="artistnamefield">Artist name:</label>
-						<input type="text" class="form-control" id="artistnamefield">
+						<input type="text" class="form-control" id="artistnamefield" required>
+						<div class="help-block with-errors"></div>
 					</div>
 					<div class="form-group">
 						<label for="artistbirthplacefield">Artist birthplace:</label>
-						<input type="text" class="form-control" id="artistbirthplacefield">
+						<input type="text" class="form-control" id="artistbirthplacefield" required>
+						<div class="help-block with-errors"></div>
 					</div>
 					<div class="form-group">
 						<label for="artistbirthdatefield">Artist birthdate:</label>
-						<input type="date" class="form-control" id="artistbirthdatefield">
+						<input type="date" class="form-control" id="artistbirthdatefield" required>
+						<div class="help-block with-errors"></div>
 					</div>
 					<div class="checkbox">
 						<label><input type="checkbox" value="" id="artistfavoritecheckbox">Favorite artist</label>
@@ -37,14 +44,25 @@
 
 					<input type="submit" value="Add artist" class="btn btn-success">
 				</form>
-			</div>			
+
+				<!-- form feedback -->
+				<div class="alert alert-success">
+					<strong>Artist successfully created</strong>
+				</div>
+
+			</div>
+
+			<!-- table of artists	 -->
 			<div class="col-sm-6">
 				<h2>List of artists:</h2>
 				<div class="form-group">
 					<label for="artistsearch">Artist name:</label>
-					<input type="text" class="form-control" id="artistsearch" placeholder="Search">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+						<input type="text" class="form-control" id="artistsearch" placeholder="Search">
+					</div>
 				</div>
-				<!-- <ul id="artisttable"></ul> -->
+
 				<table class="table" id="artisttable">
 					<thead>
 						<tr>

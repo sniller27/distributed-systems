@@ -1,21 +1,32 @@
 $(document).ready(function(){
-	
-	//artist search field
+
+	//selector variables
 	var artistsearch = '#artistsearch';
 	var artisttabletbody = '#artisttable tbody';
+	var addartistform = '#addartistform';
+	//form variables
+	var $form = $(addartistform);
+	var $successMsg = $(".alert");
 
-	//UPDATE TABLE
+	//On addartistform submission
+	$form.validator().on("submit", function(e){
+	  if(!e.isDefaultPrevented()){
+	    e.preventDefault();
+	    $successMsg.fadeIn('100').delay('3000').fadeOut('100');;
+	    createNewArtist();
+	  }
+	});
+
+	//Update artist table
 	function updateTable(artistlist, tablerefresh){
 		var artistsearchword = $(artistsearch).val();
 	    var tabledata = "";
 
 		for (var i = 0; i < artistlist.length; i++) {
-
 			if (artistlist[i].name.includes(artistsearchword)) {
 				tabledata += "<tr>";
 				for (var key in artistlist[i]) {
 				  if (artistlist[i].hasOwnProperty(key)) {
-				    // console.log(key + " -> " + artistlist[i][key]);
 				    if (key == 'favoriteArtist') {
 				    	var ischecked = "";
 				    	if (artistlist[i][key] == true) {
@@ -33,39 +44,36 @@ $(document).ready(function(){
 	    $(tablerefresh).html(tabledata);
 	}
 
-	//DETECT TABLE CHANGE
+	//Updates artist list on table change
 	$(artisttabletbody).change(function(e){
 		var chagedartistid = $(e.target).get(0).id;
-		// console.log(chagedartistid);
 		var currentbool = artists[chagedartistid-1].favoriteArtist;
-		// console.log(artists[chagedartistid-1].favoriteArtist);
 		artists[chagedartistid-1].favoriteArtist = !currentbool;
 	});
 
-	//NEW ARTIST (client-side)
-    $("#addartistform").submit(function(){
+	//Creates new artist
+    function createNewArtist(){
     	var artistname = $('#artistnamefield').val();
     	var artistbplace = $('#artistbirthplacefield').val();
     	var artistbday = $('#artistbirthdatefield').val();
     	var artistfavorite = $('#artistfavoritecheckbox').is(':checked');
 		
-			//getting variables by passing parameters
-	        // artistdata(artistname, artistbplace, artistbday, artistfavorite);
-		    var artist = new Artist(artistname, artistbplace, artistbday, artistfavorite);
-		    artist.addArtist();
-		    console.log(artist);
-		    console.log("get artists: " + artist.getArtists());
-		    //let this one stay here for now since I don't know if it's possible to pass a function.
-		    updateTable(artist.getArtists(), artisttabletbody);
+		    addArtist(artistname, artistbplace, artistbday, artistfavorite);
+		    updateTable(artists, artisttabletbody)
+		    clearForm();
 
-		    //return prevents site reload
+		    //return false prevents site reload
 		    return false;
-		
+	};
 
-	});
-
-	//SEARCH
+	//Search for artist
 	$(artistsearch).keyup(function(){
 	    updateTable(artists, artisttabletbody);
 	});
+
+	//Clear form
+	function clearForm(){
+		$(addartistform).find('input:text, input[type=date]').val('');
+    	$(addartistform).find('input[type=checkbox]').prop('checked', false);
+	}
 });
