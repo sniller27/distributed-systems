@@ -1,5 +1,8 @@
 $(document).ready(function(){
 
+	/**
+		VARIABLES
+	**/
 	//selector variables
 	var artistsearch = '#artistsearch';
 	var artisttabletbody = '#artisttable tbody';
@@ -8,6 +11,9 @@ $(document).ready(function(){
 	var $form = $(addartistform);
 	var $successMsg = $(".alert");
 
+	/** 
+		EVENTS
+	**/
 	//On addartistform submission
 	$form.validator().on("submit", function(e){
 	  if(!e.isDefaultPrevented()){
@@ -17,6 +23,36 @@ $(document).ready(function(){
 	  }
 	});
 
+	//Search for artist
+	$(artistsearch).keyup(function(){
+	    updateTable(artists, artisttabletbody);
+	});
+
+	//Updates artist list on table change
+	$(artisttabletbody).change(function(e){
+		var chagedartistid = $(e.target).get(0).id;
+		var currentbool = artists[chagedartistid-1].favoriteArtist;
+		artists[chagedartistid-1].favoriteArtist = !currentbool;
+	});
+
+	/** 
+		METHODS
+	**/
+	//Creates new artist
+    function createNewArtist(){
+    	var artistname = $('#artistnamefield').val();
+    	var artistbplace = $('#artistbirthplacefield').val();
+    	var artistbday = $('#artistbirthdatefield').val();
+    	var artistfavorite = $('#artistfavoritecheckbox').is(':checked');
+		
+		    addArtist(artistname, artistbplace, artistbday, artistfavorite);
+		    updateTable(artists, artisttabletbody)
+		    clearForm();
+
+		    //return false prevents site reload
+		    return false;
+	};
+	
 	//Update artist table
 	function updateTable(artistlist, tablerefresh){
 		var artistsearchword = $(artistsearch).val();
@@ -43,33 +79,6 @@ $(document).ready(function(){
 		}
 	    $(tablerefresh).html(tabledata);
 	}
-
-	//Updates artist list on table change
-	$(artisttabletbody).change(function(e){
-		var chagedartistid = $(e.target).get(0).id;
-		var currentbool = artists[chagedartistid-1].favoriteArtist;
-		artists[chagedartistid-1].favoriteArtist = !currentbool;
-	});
-
-	//Creates new artist
-    function createNewArtist(){
-    	var artistname = $('#artistnamefield').val();
-    	var artistbplace = $('#artistbirthplacefield').val();
-    	var artistbday = $('#artistbirthdatefield').val();
-    	var artistfavorite = $('#artistfavoritecheckbox').is(':checked');
-		
-		    addArtist(artistname, artistbplace, artistbday, artistfavorite);
-		    updateTable(artists, artisttabletbody)
-		    clearForm();
-
-		    //return false prevents site reload
-		    return false;
-	};
-
-	//Search for artist
-	$(artistsearch).keyup(function(){
-	    updateTable(artists, artisttabletbody);
-	});
 
 	//Clear form
 	function clearForm(){
