@@ -3,6 +3,19 @@ $(document).ready(function(){
 	//selector variables
 	var artistsearch = '#artistsearch';
 	var artisttabletbody = '#artisttable tbody';
+	var addartistform = '#addartistform';
+	//form variables
+	var $form = $(addartistform);
+	var $successMsg = $(".alert");
+
+	//On addartistform submission
+	$form.validator().on("submit", function(e){
+	  if(!e.isDefaultPrevented()){
+	    e.preventDefault();
+	    $successMsg.fadeIn('100').delay('3000').fadeOut('100');;
+	    createNewArtist();
+	  }
+	});
 
 	//Update artist table
 	function updateTable(artistlist, tablerefresh){
@@ -38,19 +51,20 @@ $(document).ready(function(){
 		artists[chagedartistid-1].favoriteArtist = !currentbool;
 	});
 
-	//New artist
-    $("#addartistform").submit(function(){
+	//Creates new artist
+    function createNewArtist(){
     	var artistname = $('#artistnamefield').val();
     	var artistbplace = $('#artistbirthplacefield').val();
     	var artistbday = $('#artistbirthdatefield').val();
     	var artistfavorite = $('#artistfavoritecheckbox').is(':checked');
 		
 		    addArtist(artistname, artistbplace, artistbday, artistfavorite);
-		    updateTable(artists, artisttabletbody);
+		    updateTable(artists, artisttabletbody)
 		    clearForm();
+
 		    //return false prevents site reload
 		    return false;
-	});
+	};
 
 	//Search for artist
 	$(artistsearch).keyup(function(){
@@ -59,6 +73,7 @@ $(document).ready(function(){
 
 	//Clear form
 	function clearForm(){
-		// $('#addartistform').reset();
+		$(addartistform).find('input:text, input[type=date]').val('');
+    	$(addartistform).find('input[type=checkbox]').prop('checked', false);
 	}
 });

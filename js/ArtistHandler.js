@@ -15,5 +15,4 @@ var Artist = function(artistname, artistbplace, artistbday, artistfavorite){
 function addArtist(artistname, artistbplace, artistbday, artistfavorite){
 	var artist = new Artist(artistname, artistbplace, artistbday, artistfavorite);
 	artists.push(artist);
-	console.log(artists);
 }
