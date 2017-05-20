@@ -3,7 +3,7 @@ var express = require('express')
 var app = express()
 
 //body parser for encoding and getting POST parameters (and maybe URL's)?
-var bodyParser = require('body-parser')
+// var bodyParser = require('body-parser')
 
 //path for static files (built-in module)
 var path = require('path');
@@ -98,10 +98,10 @@ app.use(function (req, res, next) {
 });
 
 //body parser
-app.use(bodyParser.json());       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-})); 
+// app.use(bodyParser.json());       // to support JSON-encoded bodies
+// app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+//   extended: true
+// })); 
 
 
 //Create and Start a server
@@ -135,9 +135,8 @@ app.get('/', function(req, res){
 });
 
 app.get('/artists', function(req, res){
-console.log(req.body)
-var name = 'b';
-  User.find({'name' : new RegExp(name, 'i')}, function(err, users) {
+var nameparameter = req.query.name;
+  User.find({'name' : new RegExp(nameparameter, 'i')}, function(err, users) {
     if (err) throw err;
 
     // object of all the users

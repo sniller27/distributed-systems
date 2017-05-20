@@ -19,28 +19,6 @@ $(document).ready(function(){
  //        console.log('WebSocket error: ' + error);
  //    };
 
-    /**
-		AJAX
-    **/
-
-    
-
-    // $.ajax({
-    //     url: 'localhost:8080',
-    //     // dataType: "jsonp",
-    //     data: '{"data": "TEST"}',
-    //     type: 'POST',
-    //     // jsonpCallback: 'callback',
-    //     success: function (data) {
-    //         var ret = jQuery.parseJSON(data);
-    //         // $('#lblResponse').html(ret.msg);
-    //         console.log('Success: ')
-    //     },
-    //     error: function (xhr, status, error) {
-    //         console.log('Error: ');
-    //         // $('#lblResponse').html('Error connecting to the server.');
-    //     },
-    // });
 	/**
 		VARIABLES
 	**/
@@ -60,29 +38,30 @@ $(document).ready(function(){
 	/**
 		AJAX
 	**/
-	// updateTable(artists, artisttabletbody);
-    $.getJSON("/artists", function(result){
-    	var tabledata = "";
-        $.each(result, function(i, field){
-        	tabledata += "<tr>";
+	// var artistsurl = "/artists";
+	updateTable(artists, artisttabletbody);
+ //    $.getJSON(artistsurl, function(result){
+ //    	var tabledata = "";
+ //        $.each(result, function(i, field){
+ //        	tabledata += "<tr>";
 
-        	console.log(field.location);
-        	// console.log(JSON.parse(field.location));
-            // $(artisttabletbody).append(JSON.stringify(field) + "<br>");
-            console.log(field);
-            console.log(JSON.stringify(field));
-            console.log(JSON.stringify(field.location));
-            console.log(field.location);
-            tabledata += "<td>"+field.id+"</td>";
-            tabledata += "<td>"+field.name+"</td>";
-            tabledata += "<td>"+field.birthPlace+"</td>";
-            tabledata += "<td>"+field.birthDate+"</td>";
-            tabledata += "<td>"+field.favoritebool+"</td>";
+ //        	console.log(field.location);
+ //        	// console.log(JSON.parse(field.location));
+ //            // $(artisttabletbody).append(JSON.stringify(field) + "<br>");
+ //            console.log(field);
+ //            console.log(JSON.stringify(field));
+ //            console.log(JSON.stringify(field.location));
+ //            console.log(field.location);
+ //            tabledata += "<td>"+field.id+"</td>";
+ //            tabledata += "<td>"+field.name+"</td>";
+ //            tabledata += "<td>"+field.birthPlace+"</td>";
+ //            tabledata += "<td>"+field.birthDate+"</td>";
+ //            tabledata += "<td>"+field.favoritebool+"</td>";
         	
-        	tabledata += "</tr>";
-        });
-        $(artisttabletbody).html(tabledata);
-    });
+ //        	tabledata += "</tr>";
+ //        });
+ //        $(artisttabletbody).html(tabledata);
+ //    });
 
 	/** 
 		EVENTS
@@ -158,43 +137,32 @@ $(document).ready(function(){
 	//Update artist table
 	function updateTable(artistlist, tablerefresh){
 
-		// $.getJSON("/artists", function(result){
-	 //        $.each(result, function(i, field){
-	 //            $("div").append(field + " ");
-	 //        });
-	 //    });
-
 		var artistsearchword = $(artistsearch).val();
-	    var tabledata = "";
+		var artistsurl = "/artists?name="+artistsearchword;
+		// updateTable(artists, artisttabletbody);
+		$.getJSON(artistsurl, function(result){
 
-		for (var i = 0; i < artistlist.length; i++) {
-			var getartistname = artistlist[i].getName();
-			console.log("artist name: " + getartistname);
-			if (getartistname.includes(artistsearchword)) {
+			var tabledata = "";
+			
+			$.each(result, function(i, field){
+
+				//radio button
+				var ischecked = field.favoritebool == 'true' ? " checked" : "";
+
 				tabledata += "<tr>";
-
-				for (var key in artistlist[i]) {
-
-					//not completely dynamic solution
-				  if (artistlist[i].hasOwnProperty(key) && key != 'setFavoriteArtist') {
-				  	var artistfunction = eval("artistlist[i]['" + key + "']()");
-				    if (key == 'getFavoriteArtist') {
-				    	var ischecked = "";
-				    	if (artistlist[i].getFavoriteArtist() == true) {
-				    		ischecked = " checked";
-				    	}
-				    	tabledata += "<td><input type='checkbox' value='"+artistfunction+"' id='"+artistlist[i].getId()+"'"+ischecked+"></td>";
-				    }else {
-				    	tabledata += "<td>"+artistfunction+"</td>";
-				    }
-				  }
-
-				}
-
+			    tabledata += "<td>"+field.id+"</td>";
+			    tabledata += "<td>"+field.name+"</td>";
+			    tabledata += "<td>"+field.birthPlace+"</td>";
+			    tabledata += "<td>"+field.birthDate+"</td>";
+			    tabledata += "<td><input type='checkbox' value='"+field.favoritebool+"' id='"+field.id+"'"+ischecked+"></td>";
+			    tabledata += "<td><button type='button' id="+field.id+" class='btn btn-danger'>Delete</button></td>";
 				tabledata += "</tr>";
-			}
-		}
-	    $(tablerefresh).html(tabledata);
+
+			});
+
+			$(artisttabletbody).html(tabledata);
+		});
+	
 	}
 
 	//Clear form
