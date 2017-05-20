@@ -1,5 +1,46 @@
 $(document).ready(function(){
+	
+	/**
+		WEBSOCKETS
+	**/
+	// var socketurl = 'ws://localhost:8080';
+ //    var content = document.getElementById('content');
+ //    var socket = new WebSocket(socketurl);
 
+ //    socket.onopen = function () {
+ //        socket.send('hello from the client');
+ //    };
+
+ //    socket.onmessage = function (message) {
+ //        content.innerHTML = message.data +'<br />';
+ //    };
+
+ //    socket.onerror = function (error) {
+ //        console.log('WebSocket error: ' + error);
+ //    };
+
+    /**
+		AJAX
+    **/
+
+    
+
+    // $.ajax({
+    //     url: 'localhost:8080',
+    //     // dataType: "jsonp",
+    //     data: '{"data": "TEST"}',
+    //     type: 'POST',
+    //     // jsonpCallback: 'callback',
+    //     success: function (data) {
+    //         var ret = jQuery.parseJSON(data);
+    //         // $('#lblResponse').html(ret.msg);
+    //         console.log('Success: ')
+    //     },
+    //     error: function (xhr, status, error) {
+    //         console.log('Error: ');
+    //         // $('#lblResponse').html('Error connecting to the server.');
+    //     },
+    // });
 	/**
 		VARIABLES
 	**/
@@ -15,6 +56,33 @@ $(document).ready(function(){
 	var $successMsg = $(".alert");
 	//artist id's
 	var artistid = 0;
+
+	/**
+		AJAX
+	**/
+	// updateTable(artists, artisttabletbody);
+    $.getJSON("/artists", function(result){
+    	var tabledata = "";
+        $.each(result, function(i, field){
+        	tabledata += "<tr>";
+
+        	console.log(field.location);
+        	// console.log(JSON.parse(field.location));
+            // $(artisttabletbody).append(JSON.stringify(field) + "<br>");
+            console.log(field);
+            console.log(JSON.stringify(field));
+            console.log(JSON.stringify(field.location));
+            console.log(field.location);
+            tabledata += "<td>"+field.id+"</td>";
+            tabledata += "<td>"+field.name+"</td>";
+            tabledata += "<td>"+field.birthPlace+"</td>";
+            tabledata += "<td>"+field.birthDate+"</td>";
+            tabledata += "<td>"+field.favoritebool+"</td>";
+        	
+        	tabledata += "</tr>";
+        });
+        $(artisttabletbody).html(tabledata);
+    });
 
 	/** 
 		EVENTS
@@ -55,6 +123,26 @@ $(document).ready(function(){
 	    updateTable(artists, artisttabletbody)
 	    clearForm();
 
+
+	    // $.ajax({
+	    //     url: 'localhost:8080/callback=?',
+	    //     dataType: "jsonp",
+	    //     data: '{"data": "TEST"}',
+	    //     type: 'POST',
+	    //     // jsonpCallback: 'callback',
+	    //     success: function (data) {
+	    //         var ret = jQuery.parseJSON(data);
+	    //         console.log('data: ' + ret);
+	    //         // $('#lblResponse').html(ret.msg);
+	    //         console.log('Success: ')
+	    //     },
+	    //     error: function (xhr, status, error) {
+	    //         console.log('Error: ');
+	    //         // $('#lblResponse').html('Error connecting to the server.');
+	    //     },
+	    // });
+
+
 	    //return false prevents site reload
 	    return false;
 	};
@@ -69,6 +157,13 @@ $(document).ready(function(){
 
 	//Update artist table
 	function updateTable(artistlist, tablerefresh){
+
+		// $.getJSON("/artists", function(result){
+	 //        $.each(result, function(i, field){
+	 //            $("div").append(field + " ");
+	 //        });
+	 //    });
+
 		var artistsearchword = $(artistsearch).val();
 	    var tabledata = "";
 
@@ -77,7 +172,9 @@ $(document).ready(function(){
 			console.log("artist name: " + getartistname);
 			if (getartistname.includes(artistsearchword)) {
 				tabledata += "<tr>";
+
 				for (var key in artistlist[i]) {
+
 					//not completely dynamic solution
 				  if (artistlist[i].hasOwnProperty(key) && key != 'setFavoriteArtist') {
 				  	var artistfunction = eval("artistlist[i]['" + key + "']()");
@@ -91,7 +188,9 @@ $(document).ready(function(){
 				    	tabledata += "<td>"+artistfunction+"</td>";
 				    }
 				  }
+
 				}
+
 				tabledata += "</tr>";
 			}
 		}
