@@ -15,11 +15,14 @@ var http = require('http');
 var mongoose = require('mongoose');
 
 //artist class
-var Artist = require('./app/Artist');
+// var Artist = require('./app/Artist');
 var connectdb = require('./config/db.js');
+var routes = require('./app/routes.js');
 
 //connect to mongodb
 connectdb();
+//routes
+
 
 /**
     USED MIDDLEWARE
@@ -42,82 +45,83 @@ server.listen(PORT, function(){
   console.log("Server listening on: http://localhost:%s", PORT);
 });
 
-/**
-    ROUTING (GET/POST)
-**/
+routes(app);
+// /**
+//     ROUTING (GET/POST)
+// **/
 
-//ENTRY-POINT (INDEX-PAGE)
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
+// //ENTRY-POINT (INDEX-PAGE)
+// app.get('/', function(req, res){
+//   res.sendFile(__dirname + '/index.html');
+// });
 
-//READ ARTISTS
-app.get('/artists', function(req, res){
-var nameparameter = req.query.name;
-  Artist.find({'name' : new RegExp(nameparameter, 'i')}, function(err, users) {
-    if (err) throw err;
+// //READ ARTISTS
+// app.get('/artists', function(req, res){
+// var nameparameter = req.query.name;
+//   Artist.find({'name' : new RegExp(nameparameter, 'i')}, function(err, users) {
+//     if (err) throw err;
 
-    res.json(users);
-  });
-});
+//     res.json(users);
+//   });
+// });
 
-//INSERT NEW ARTIST
-app.post('/addartist', function(req, res){
+// //INSERT NEW ARTIST
+// app.post('/addartist', function(req, res){
 
-  res.send(req.body);
+//   res.send(req.body);
 
-  var newArtist = new Artist({
-    id: 4,
-    name: req.body.aname,
-    birthPlace: req.body.abirthplace,
-    birthDate: req.body.abirthdate,
-    favoritebool: req.body.afavorite
-  });
+//   var newArtist = new Artist({
+//     id: 4,
+//     name: req.body.aname,
+//     birthPlace: req.body.abirthplace,
+//     birthDate: req.body.abirthdate,
+//     favoritebool: req.body.afavorite
+//   });
 
-  //Mongoose Save Funtktion to save data
-  newArtist.save(function(error) {
-    if (error) {
-      console.error(error);
-    }
-  });
+//   //Mongoose Save Funtktion to save data
+//   newArtist.save(function(error) {
+//     if (error) {
+//       console.error(error);
+//     }
+//   });
 
-});
+// });
 
-//UPDATE ARTIST
-app.post('/updateartist', function(req, res){
+// //UPDATE ARTIST
+// app.post('/updateartist', function(req, res){
 
-  res.send(req.body);
-  var artistid = req.body.selectedid;
+//   res.send(req.body);
+//   var artistid = req.body.selectedid;
 
-  Artist.findById(artistid, function(err, user) {
-    if (err) throw err;
+//   Artist.findById(artistid, function(err, user) {
+//     if (err) throw err;
 
-    user.favoritebool = req.body.afavorite;
+//     user.favoritebool = req.body.afavorite;
 
-    //saves the changes to db
-    user.save(function(error) {
-      if (error) {
-        console.error(error);
-      }
-    });
-  });
+//     //saves the changes to db
+//     user.save(function(error) {
+//       if (error) {
+//         console.error(error);
+//       }
+//     });
+//   });
 
-});
+// });
 
-//DELETE ARTIST
-app.post('/deleteartist', function(req, res){
+// //DELETE ARTIST
+// app.post('/deleteartist', function(req, res){
 
-  res.send(req.body);
-  var delid = req.body.selectedid;
+//   res.send(req.body);
+//   var delid = req.body.selectedid;
 
-   //Mongoose Save Funtktion to save data
-  Artist.findOneAndRemove({_id : delid}, function(error) {
-    if (error) {
-      console.error(error);
-    }
-  });
+//    //Mongoose Save Funtktion to save data
+//   Artist.findOneAndRemove({_id : delid}, function(error) {
+//     if (error) {
+//       console.error(error);
+//     }
+//   });
   
-});
+// });
 
 
 //JSON API
