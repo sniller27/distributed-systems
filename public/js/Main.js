@@ -46,15 +46,11 @@ $(document).ready(function(){
 	        type: 'POST',
 	        // jsonpCallback: 'callback',
 	        success: function (data) {
-	            // var ret = jQuery.parseJSON(data);
-	            // console.log('data: ' + ret);
-	            // $('#lblResponse').html(ret.msg);
 	            console.log('Success: ')
 	            console.log(JSON.stringify(data));
 	        },
 	        error: function (xhr, status, error) {
 	            console.log('Error: ' + error);
-	            // $('#lblResponse').html('Error connecting to the server.');
 	        },
 	    });
 

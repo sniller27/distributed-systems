@@ -1,6 +1,5 @@
-// var express = require('express')
-// var app = express()
 var path = require('path');
+var sanitizer = require('sanitizer');
 
 var Artist = require('./Artist');
 
@@ -14,7 +13,8 @@ module.exports = function (app) {
   //READ ARTISTS
   app.get('/artists', function(req, res){
   var nameparameter = req.query.name;
-    Artist.find({'name' : new RegExp(nameparameter, 'i')}, function(err, users) {
+  var nameparametersanitized = sanitizer.escape(nameparameter);
+    Artist.find({'name' : new RegExp(nameparametersanitized, 'i')}, function(err, users) {
       if (err) throw err;
 
       res.json(users);
@@ -26,10 +26,14 @@ module.exports = function (app) {
 
     res.send(req.body);
 
+    //sanitizing
+    var sanitizename = sanitizer.escape(req.body.aname);
+    var sanitizebplace = sanitizer.escape(req.body.abirthplace);
+
     var newArtist = new Artist({
       id: 4,
-      name: req.body.aname,
-      birthPlace: req.body.abirthplace,
+      name: sanitizename,
+      birthPlace: sanitizebplace,
       birthDate: req.body.abirthdate,
       favoritebool: req.body.afavorite
     });
