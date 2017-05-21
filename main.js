@@ -2,8 +2,8 @@
 var express = require('express')
 var app = express()
 
-//body parser for encoding and getting POST parameters (and maybe URL's)?
-// var bodyParser = require('body-parser')
+//body parser for encoding and getting POST parameters (and maybe URL's)
+var bodyParser = require('body-parser')
 
 //path for static files (built-in module)
 var path = require('path');
@@ -98,10 +98,10 @@ app.use(function (req, res, next) {
 });
 
 //body parser
-// app.use(bodyParser.json());       // to support JSON-encoded bodies
-// app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-//   extended: true
-// })); 
+app.use(bodyParser.json());       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+})); 
 
 
 //Create and Start a server
@@ -127,13 +127,14 @@ server.listen(PORT, function(){
 
 // }).listen(PORT)
 
-
+//ENTRY-POINT (INDEX-PAGE)
 app.get('/', function(req, res){
   console.log('get meh');
   res.sendFile(__dirname + '/index.html');
 
 });
 
+//READ ARTISTS
 app.get('/artists', function(req, res){
 var nameparameter = req.query.name;
   User.find({'name' : new RegExp(nameparameter, 'i')}, function(err, users) {
@@ -147,21 +148,31 @@ var nameparameter = req.query.name;
   
 });
 
-app.post('/', function(req, res){
+//INSERT NEW ARTIST
+app.post('/addartist', function(req, res){
 console.log('post meh');
-  // var newArtist = new Artist({
-  //   location: "helsinge",
-  //   bdate: "33/2",
-  //   favorit: "joes j",
-  //   uid:0
-  // });
+var nameparameter = req.query.data;
+console.log(nameparameter);
 
-  // //Mongoose Save Funtktion to save data
-  // newArtist.save(function(error) {
-  //   if (error) {
-  //     console.error(error);
-  //   }
-  // });
+console.log('body: ' + JSON.stringify(req.body));
+console.log('body2: ' + JSON.stringify(req.body.aname));
+res.send(req.body);
+
+
+  var newArtist = new Artist({
+    id: 4,
+    name: req.body.aname,
+    birthPlace: req.body.abirthplace,
+    birthDate: req.body.abirthdate,
+    favoritebool: req.body.afavorite
+  });
+
+  //Mongoose Save Funtktion to save data
+  newArtist.save(function(error) {
+    if (error) {
+      console.error(error);
+    }
+  });
 
 });
 

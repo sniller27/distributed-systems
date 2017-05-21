@@ -97,29 +97,37 @@ $(document).ready(function(){
     	var artistbplace = $('#artistbirthplacefield').val();
     	var artistbday = $('#artistbirthdatefield').val();
     	var artistfavorite = $('#artistfavoritecheckbox').is(':checked');
-		
+	    
+		var data = {};
+		data.aname = $('#addartistform').find('input[name="artistname"]').val();
+		data.abirthplace = $('#addartistform').find('input[name="artistbirthplace"]').val();
+		data.abirthdate = $('#addartistform').find('input[name="artistbirthdate"]').val();
+		data.afavorite = $('#addartistform').find('input[name="artistfavorite"]').is(":checked");
+		console.log('bool: ' + $('#addartistform').find('input[name="artistfavorite"]').is(":checked"));
+
+	    $.ajax({
+	        url: 'http://localhost:8080/addartist',
+	        // dataType: "jsonp",
+	        data: JSON.stringify(data),
+	        contentType: 'application/json',
+	        type: 'POST',
+	        // jsonpCallback: 'callback',
+	        success: function (data) {
+	            // var ret = jQuery.parseJSON(data);
+	            // console.log('data: ' + ret);
+	            // $('#lblResponse').html(ret.msg);
+	            console.log('Success: ')
+	            console.log(JSON.stringify(data));
+	        },
+	        error: function (xhr, status, error) {
+	            console.log('Error: ' + error);
+	            // $('#lblResponse').html('Error connecting to the server.');
+	        },
+	    });
+
 	    addArtist(artistname, artistbplace, artistbday, artistfavorite);
 	    updateTable(artists, artisttabletbody)
 	    clearForm();
-
-
-	    // $.ajax({
-	    //     url: 'localhost:8080/callback=?',
-	    //     dataType: "jsonp",
-	    //     data: '{"data": "TEST"}',
-	    //     type: 'POST',
-	    //     // jsonpCallback: 'callback',
-	    //     success: function (data) {
-	    //         var ret = jQuery.parseJSON(data);
-	    //         console.log('data: ' + ret);
-	    //         // $('#lblResponse').html(ret.msg);
-	    //         console.log('Success: ')
-	    //     },
-	    //     error: function (xhr, status, error) {
-	    //         console.log('Error: ');
-	    //         // $('#lblResponse').html('Error connecting to the server.');
-	    //     },
-	    // });
 
 
 	    //return false prevents site reload
@@ -128,10 +136,10 @@ $(document).ready(function(){
 
 	//Add artist function
 	function addArtist(artistname, artistbplace, artistbday, artistfavorite){
-		artistid++;
-		var artist = new Artist(artistid, artistname, artistbplace, artistbday, artistfavorite);
-		console.log(artist.getName());
-		artists.push(artist);
+		// artistid++;
+		// var artist = new Artist(artistid, artistname, artistbplace, artistbday, artistfavorite);
+		// console.log(artist.getName());
+		// artists.push(artist);
 	}
 
 	//Update artist table
@@ -143,7 +151,7 @@ $(document).ready(function(){
 		$.getJSON(artistsurl, function(result){
 
 			var tabledata = "";
-			
+
 			$.each(result, function(i, field){
 
 				//radio button
