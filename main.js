@@ -7,58 +7,26 @@ var express = require('express')
 var app = express()
 //body parser for encoding and getting POST parameters (and maybe URL's)
 var bodyParser = require('body-parser')
-//path for static files (built-in module)
+//path for static files (core module)
 var path = require('path');
-//http (built-in module)
+//http (core module)
 var http = require('http');
-//mongodb for data storage
-var mongodb =  require('mongodb');
 //mongoose makes it easier to communicate with mongodb
 var mongoose = require('mongoose');
 
 //artist class
-var Artist = require('./Artist');
+var Artist = require('./app/Artist');
+var connectdb = require('./config/db.js');
 
-/** 
-    VARIABLES
-**/
-const PORT= process.env.PORT || 8080;
-var URLmongodb = 'mongodb://john:1234@ds137121.mlab.com:37121/artistdb';
-
-/**
-    MONGODB
-**/
-//Mongoose Connection
-mongoose.connect(URLmongodb); // connect to our mongoDB database (uncomment after you enter in your own credentials in config/db.js)
-
-var db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error"));
-
-db.once("open", function (callback) {
-  console.log("Connection succeeded.");
-});
-
-//Schema
-var schema = new mongoose.Schema({
-    
-    id: Number,
-    name: String,
-    birthPlace: String,
-    birthDate: String,
-    favoritebool: String
-
-});
-//Model
-var User = db.model('artists', schema);
+//connect to mongodb
+connectdb();
 
 /**
     USED MIDDLEWARE
 **/
 
 //static files
-app.use('/public', express.static(path.join(__dirname, 'public')))
-// app.use('/js', express.static(path.join(__dirname, 'js')));
-// app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 //body parser
 app.use(bodyParser.json());       // to support JSON-encoded bodies
@@ -68,6 +36,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 //Create and Start a server
 //Must be at the and, first we create our handle functions and than we start the server
+const PORT= process.env.PORT || 8080;
 var server = http.createServer(app);
 server.listen(PORT, function(){
   console.log("Server listening on: http://localhost:%s", PORT);
@@ -85,7 +54,7 @@ app.get('/', function(req, res){
 //READ ARTISTS
 app.get('/artists', function(req, res){
 var nameparameter = req.query.name;
-  User.find({'name' : new RegExp(nameparameter, 'i')}, function(err, users) {
+  Artist.find({'name' : new RegExp(nameparameter, 'i')}, function(err, users) {
     if (err) throw err;
 
     res.json(users);
@@ -120,7 +89,7 @@ app.post('/updateartist', function(req, res){
   res.send(req.body);
   var artistid = req.body.selectedid;
 
-  User.findById(artistid, function(err, user) {
+  Artist.findById(artistid, function(err, user) {
     if (err) throw err;
 
     user.favoritebool = req.body.afavorite;
@@ -142,7 +111,7 @@ app.post('/deleteartist', function(req, res){
   var delid = req.body.selectedid;
 
    //Mongoose Save Funtktion to save data
-  User.findOneAndRemove({_id : delid}, function(error) {
+  Artist.findOneAndRemove({_id : delid}, function(error) {
     if (error) {
       console.error(error);
     }
