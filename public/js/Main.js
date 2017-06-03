@@ -3,6 +3,7 @@ $(document).ready(function(){
 	/**
 		VARIABLES
 	**/
+	var artistlist = [];
 
 	//selector variables
 	var artistsearch = '#artistsearch';
@@ -13,7 +14,8 @@ $(document).ready(function(){
 	var $successMsg = $(".alert");
 
 	//populate table onload
-	updateTable();
+	getData();
+	// updateTable();
 
 	/** 
 		EVENTS
@@ -68,7 +70,23 @@ $(document).ready(function(){
 		data.abirthdate = $('#addartistform').find('input[name="artistbirthdate"]').val();
 		data.afavorite = $('#addartistform').find('input[name="artistfavorite"]').is(":checked");
 
-	    ajaxRequests(data, 'POST');
+	    // ajaxRequests(data, 'POST');
+
+	    $.ajax({
+	        url: '/api/artist',
+	        data: JSON.stringify(data),
+	        contentType: 'application/json',
+	        type: "POST",
+	        success: function (data) {
+	            console.log('Success: ')
+	            console.log(JSON.stringify(data));
+	            artistlist.push(data);
+	            updateTable();
+	        },
+	        error: function (xhr, status, error) {
+	            console.log('Error: ' + error);
+	        },
+	    });
 
 	    clearForm();
 
@@ -79,33 +97,25 @@ $(document).ready(function(){
 	//Update artist table
 	function updateTable(){
 
-		var artistsearchword = $(artistsearch).val();
-		var artistsurl = "/api/artists?name="+artistsearchword;
-
-		$.getJSON(artistsurl, function(result){
-
 			var tabledata = "";
 
-			$.each(result, function(i, field){
+			for (var i = 0; i < artistlist.length; i++) {
+				var artistselement = artistlist[i];
 
 				//radio button
-				var ischecked = field.favoritebool == 'true' ? " checked" : "";
-				// var artistid = field._id;
+				var ischecked = artistselement.favoritebool == 'true' ? " checked" : "";
 
 				tabledata += "<tr>";
-			    // tabledata += "<td>"+artistid+"</td>";
-			    tabledata += "<td>"+field.id+"</td>";
-			    tabledata += "<td>"+field.name+"</td>";
-			    tabledata += "<td>"+field.birthPlace+"</td>";
-			    tabledata += "<td>"+field.birthDate+"</td>";
-			    tabledata += "<td><input type='checkbox' value='"+field.favoritebool+"' id='"+field.id+"'"+ischecked+"></td>";
-			    tabledata += "<td><button type='button' id="+field.id+" class='btn btn-danger removeartist'>Delete</button></td>";
+			    tabledata += "<td>"+artistselement.id+"</td>";
+			    tabledata += "<td>"+artistselement.name+"</td>";
+			    tabledata += "<td>"+artistselement.birthPlace+"</td>";
+			    tabledata += "<td>"+artistselement.birthDate+"</td>";
+			    tabledata += "<td><input type='checkbox' value='"+artistselement.favoritebool+"' id='"+artistselement.id+"'"+ischecked+"></td>";
+			    tabledata += "<td><button type='button' id="+artistselement.id+" class='btn btn-danger removeartist'>Delete</button></td>";
 				tabledata += "</tr>";
-
-			});
+			}
 
 			$(artisttabletbody).html(tabledata);
-		});
 	
 	}
 
@@ -125,16 +135,46 @@ $(document).ready(function(){
 	        success: function (data) {
 	            console.log('Success: ')
 	            console.log(JSON.stringify(data));
+	            updateTable();
 	        },
 	        error: function (xhr, status, error) {
 	            console.log('Error: ' + error);
 	        },
-	    }).done(function(response) {
-	        // callback(response);
-	        console.log("done");
-	        updateTable();
 	    });
 	}
 
+	//get data
+	function getData(){
+		var artistsearchword = $(artistsearch).val();
+		var artistsurl = "/api/artists?name="+artistsearchword;
+
+		//parses JSON automatically, I think
+		$.getJSON(artistsurl, function(result){
+			var tabledata = "";
+
+			$.each(result, function(i, field){
+				artistlist.push(field);
+
+				//radio button
+				var ischecked = field.favoritebool == 'true' ? " checked" : "";
+				// var artistid = field._id;
+
+				tabledata += "<tr>";
+			    // tabledata += "<td>"+artistid+"</td>";
+			    tabledata += "<td>"+field.id+"</td>";
+			    tabledata += "<td>"+field.name+"</td>";
+			    tabledata += "<td>"+field.birthPlace+"</td>";
+			    tabledata += "<td>"+field.birthDate+"</td>";
+			    tabledata += "<td><input type='checkbox' value='"+field.favoritebool+"' id='"+field.id+"'"+ischecked+"></td>";
+			    tabledata += "<td><button type='button' id="+field.id+" class='btn btn-danger removeartist'>Delete</button></td>";
+				tabledata += "</tr>";
+
+			});
+
+			$(artisttabletbody).html(tabledata);
+			console.log(artistlist);
+		});
+	
+	}
 
 });
