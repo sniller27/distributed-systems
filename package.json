@@ -22,6 +22,7 @@
     "express": "^4.15.3",
     "mongodb": "^2.2.26",
     "mongoose": "^4.9.9",
+    "mongoose-sequence": "^3.2.0",
     "nodejs-websocket": "^1.7.1",
     "sanitizer": "^0.1.3"
   }
