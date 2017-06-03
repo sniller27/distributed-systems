@@ -39,15 +39,15 @@ module.exports = function (app) {
     res.send(req.body);
 
     //sanitizing
-    var sanitizename = sanitizer.escape(req.body.aname);
-    var sanitizebplace = sanitizer.escape(req.body.abirthplace);
+    var sanitizename = sanitizer.escape(req.body.name);
+    var sanitizebplace = sanitizer.escape(req.body.birthPlace);
 
     var newArtist = new Artist({
       // id: 4,
       name: sanitizename,
       birthPlace: sanitizebplace,
-      birthDate: req.body.abirthdate,
-      favoritebool: req.body.afavorite
+      birthDate: req.body.birthDate,
+      favoritebool: req.body.favoritebool
     });
     //Mongoose Save Funtktion to save data
     newArtist.save(function(error) {
