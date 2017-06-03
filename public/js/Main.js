@@ -35,7 +35,6 @@ $(document).ready(function(){
 		data.selectedid = delartistid;
 
 	    ajaxRequests(data, 'DELETE');
-	    updateTable();
 
 	});
 
@@ -71,7 +70,6 @@ $(document).ready(function(){
 
 	    ajaxRequests(data, 'POST');
 
-	    updateTable();
 	    clearForm();
 
 	    //return false should also prevent site reload

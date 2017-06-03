@@ -56,8 +56,6 @@ module.exports = function (app) {
       }
     });
 
-    
-
   });
 
   //UPDATE ARTIST (PUT)
@@ -71,34 +69,6 @@ module.exports = function (app) {
     }, function(err, numberAffected, rawResponse) {
        //handle it
     })
-
-    // Artist.find({'id' : artistid}, function(err, users) {
-    //   if (err) throw err;
-
-      
-    //   console.log("hey" + users);
-
-    //   users.favoritebool = req.body.afavorite;
-
-    //   users.save(function(error) {
-    //     if (error) {
-    //       console.error(error);
-    //     }
-    //   });
-
-    // });
-    // Artist.findById(artistid, function(err, user) {
-    //   if (err) throw err;
-
-    //   user.favoritebool = req.body.afavorite;
-
-    //   //saves the changes to db
-    //   user.save(function(error) {
-    //     if (error) {
-    //       console.error(error);
-    //     }
-    //   });
-    // });
 
   });
 
