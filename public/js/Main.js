@@ -1,5 +1,34 @@
 $(document).ready(function(){
 	
+	/** 
+		WEBSOCKET CONFIG AND LISTENERS
+	**/
+	var socketurl = 'ws://localhost:8080';
+	var socket = new WebSocket(socketurl, 'echo-protocol');
+	// socket.onopen = function () {
+	//  // socket.send('hello from the client');
+	// };
+
+	//websocket methods
+	socket.onmessage = function (message) {
+	 // content.innerHTML = message.data +'<br />';
+	 // socket.send('okay');
+
+		artistlist = [];
+		getData(function( returnValue ){
+			updateTable();
+		});
+	 
+	};
+
+	socket.onerror = function (error) {
+		console.log('WebSocket error: ' + error);
+	};
+
+	socket.addEventListener("message", function(e) {
+	    // var msg = e.data;
+	});
+
 	/**
 		VARIABLES
 	**/
@@ -9,21 +38,19 @@ $(document).ready(function(){
 	var artistsearch = '#artistsearch';
 	var artisttabletbody = '#artisttable tbody';
 	var addartistform = '#addartistform';
+
 	//form variables (for Bootstrap validation)
 	var $form = $(addartistform);
 	var $successMsg = $(".alert");
 
-	//populate table onload
-	getData();
-	
-	//refresh data
-	setInterval(function(){ 
-		artistlist = [];
-		getData();
-	}, 10000);
+	//get data and populate table onload
+	getData(function( returnValue ){
+    	updateTable();
+	});
+
 	
 	/** 
-		EVENTS
+		JAVASCRIPT/JQUERY EVENTS
 	**/
 	//On addartistform submission
 	$form.validator().on("submit", function(e){
@@ -40,16 +67,16 @@ $(document).ready(function(){
 	    var delartistid = $(e.target).get(0).id;
 	    var data = {};
 		data.selectedid = delartistid;
-		console.log("id: " + delartistid);
 
 		var targetobject = $.grep(artistlist, function(e){ return e.id == delartistid; });
 
 		index = artistlist.findIndex(x => x.id == delartistid);
-		console.log("index: " + index);
 		artistlist.splice(index, index);
 
-	    ajaxRequests(data, 'DELETE');
-	    updateTable();
+	    ajaxRequests(data, 'DELETE', function(){
+	    	console.log('Success: ')
+	        console.log(JSON.stringify(data));
+	    });
 
 	});
 
@@ -66,37 +93,19 @@ $(document).ready(function(){
 		data.selectedid = chagedartistid;
 		var idselector = '#' + data.selectedid;
 		data.afavorite = $(idselector).is(":checked");
+		console.log("data: " + data);
 
-		$.ajax({
-	        url: '/api/artist',
-	        data: JSON.stringify(data),
-	        contentType: 'application/json',
-	        type: 'PUT',
-	        success: function (data) {
-	            // console.log(JSON.stringify(data));
-	            // var targetobject = $.grep(artistlist, function(e){ return e.id == chagedartistid; });
-				var targetobject = $.grep(artistlist, function(e){ return e.id == chagedartistid; });
+		ajaxRequests(data, 'PUT', function(){
+			var targetobject = $.grep(artistlist, function(e){ return e.id == chagedartistid; });
 
-	            index = artistlist.findIndex(x => x.id==targetobject[0].id);
-	            // // console.log("index: " + index);
-	            if (artistlist[index].favoritebool == "false") {
-	            	artistlist[index].favoritebool = "true"
-	            }else if(artistlist[index].favoritebool == "true") {
-	            	artistlist[index].favoritebool = "false"
-	            }
-	            // var bool = !targetobject[0].favoritebool;
-	            console.log("her : " + JSON.stringify(artistlist[index]));
-	            console.log("favoritebool : " + JSON.stringify(artistlist[index].favoritebool));
-	            // // console.log(artistlist[index].favoritebool);
+            index = artistlist.findIndex(x => x.id==targetobject[0].id);
 
-	            // artistlist[index].favoritebool = bool + "";
-
-	            updateTable();
-	        },
-	        error: function (xhr, status, error) {
-	            console.log('Error: ' + error);
-	        },
-	    });
+            if (artistlist[index].favoritebool == "false") {
+            	artistlist[index].favoritebool = "true"
+            }else if(artistlist[index].favoritebool == "true") {
+            	artistlist[index].favoritebool = "false"
+            }
+		});
 
 	});
 
@@ -111,28 +120,13 @@ $(document).ready(function(){
 		data.birthPlace = $('#addartistform').find('input[name="artistbirthplace"]').val();
 		data.birthDate = $('#addartistform').find('input[name="artistbirthdate"]').val();
 		data.favoritebool = $('#addartistform').find('input[name="artistfavorite"]').is(":checked").toString();
-console.log("value: " + data.favoritebool);
-	    // ajaxRequests(data, 'POST');
 
-	    $.ajax({
-	        url: '/api/artist',
-	        data: JSON.stringify(data),
-	        contentType: 'application/json',
-	        type: "POST",
-	        success: function (data) {
-	            console.log('Success: ')
-	            console.log(JSON.stringify(data));
-	            artistlist.push(data);
-	            updateTable();
-	            setTimeout(function(){
-	            	artistlist = [];
-	            	getData();
-	            }, 1000);
-	        },
-	        error: function (xhr, status, error) {
-	            console.log('Error: ' + error);
-	        },
-	    });
+
+		ajaxRequests(data, 'POST', function(){
+			console.log('Success: ')
+	        console.log(JSON.stringify(data));
+	        artistlist.push(data);
+		});
 
 	    clearForm();
 
@@ -169,7 +163,6 @@ console.log("value: " + data.favoritebool);
 			}
 
 			$(artisttabletbody).html(tabledata);
-	console.log(artistlist);
 	}
 
 	//Clear form
@@ -178,17 +171,14 @@ console.log("value: " + data.favoritebool);
     	$(addartistform).find('input[type=checkbox]').prop('checked', false);
 	}
 
-	//Ajax method
+	//AJAX method
 	function ajaxRequests(data, type, callback){
 		$.ajax({
 	        url: '/api/artist',
 	        data: JSON.stringify(data),
 	        contentType: 'application/json',
 	        type: type,
-	        success: function (data) {
-	            console.log('Success: ')
-	            console.log(JSON.stringify(data));
-	        },
+	        success: callback(),
 	        error: function (xhr, status, error) {
 	            console.log('Error: ' + error);
 	        },
@@ -196,36 +186,18 @@ console.log("value: " + data.favoritebool);
 	}
 
 	//get data
-	function getData(){
-		var artistsearchword = $(artistsearch).val();
-		var artistsurl = "/api/artists?name="+artistsearchword;
+	function getData(callback){
+		var artistsurl = "/api/artists";
 
-		//parses JSON automatically, I think
 		$.getJSON(artistsurl, function(result){
-			var tabledata = "";
 
 			$.each(result, function(i, field){
 				artistlist.push(field);
-
-				//radio button
-				var ischecked = field.favoritebool == 'true' ? " checked" : "";
-				// var artistid = field._id;
-
-				tabledata += "<tr>";
-			    // tabledata += "<td>"+artistid+"</td>";
-			    tabledata += "<td>"+field.id+"</td>";
-			    tabledata += "<td>"+field.name+"</td>";
-			    tabledata += "<td>"+field.birthPlace+"</td>";
-			    tabledata += "<td>"+field.birthDate+"</td>";
-			    tabledata += "<td><input type='checkbox' value='"+field.favoritebool+"' id='"+field.id+"'"+ischecked+"></td>";
-			    tabledata += "<td><button type='button' id="+field.id+" class='btn btn-danger removeartist'>Delete</button></td>";
-				tabledata += "</tr>";
-
 			});
 
-			$(artisttabletbody).html(tabledata);
+		}).then(function() {
+			callback();
 		});
-	console.log(artistlist);
 	}
 
 });

@@ -3,12 +3,17 @@ var sanitizer = require('sanitizer');
 
 var Artist = require('./Artist');
 
-module.exports = function (app) {
+var count = 0;
+var clients = {};
 
-  //ENTRY-POINT (INDEX-PAGE)
-  app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname, '../', 'index.html'));
-  });
+module.exports = function (app, request) {
+  var connection = request.accept('echo-protocol', request.origin);
+
+  
+  // Specific id for this client & increment count
+  var id = count++;
+  // Store the connection method so we can loop through & contact all clients
+  clients[id] = connection;
 
   //READ ALL ARTISTS (GET)
   app.get('/api/artists', function(req, res){
@@ -43,17 +48,25 @@ module.exports = function (app) {
     var sanitizebplace = sanitizer.escape(req.body.birthPlace);
 
     var newArtist = new Artist({
-      // id: 4,
       name: sanitizename,
       birthPlace: sanitizebplace,
       birthDate: req.body.birthDate,
       favoritebool: req.body.favoritebool
     });
-    //Mongoose Save Funtktion to save data
-    newArtist.save(function(error) {
+
+    //Mongoose Save Function to save data
+    newArtist.save(function(error, product, numAffected) {
+      
       if (error) {
         console.error(error);
       }
+      if (numAffected == 1) {
+        for(var i in clients){
+            // Send a message to the client with the message
+            clients[i].sendUTF("datasend");
+        }
+      }
+
     });
 
   });
@@ -68,6 +81,10 @@ module.exports = function (app) {
         favoritebool: req.body.afavorite
     }, function(err, numberAffected, rawResponse) {
        //handle it
+       for(var i in clients){
+           // Send a message to the client with the message
+           clients[i].sendUTF("datasend");
+       }
     })
 
   });
@@ -82,6 +99,10 @@ module.exports = function (app) {
     Artist.findOneAndRemove({id : delid}, function(error) {
       if (error) {
         console.error(error);
+      }
+      for(var i in clients){
+          // Send a message to the client with the message
+          clients[i].sendUTF("datasend");
       }
     });
     
