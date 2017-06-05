@@ -1,5 +1,24 @@
 $(document).ready(function(){
 	
+	/**
+		VARIABLES
+	**/
+	var artistlist = [];
+
+	//selector variables
+	var artistsearch = '#artistsearch';
+	var artisttabletbody = '#artisttable tbody';
+	var addartistform = '#addartistform';
+
+	//form variables (for Bootstrap validation)
+	var $form = $(addartistform);
+	var $successMsg = $(".alert");
+
+	//get data and populate table onload
+	getData(function( returnValue ){
+    	updateTable();
+	});
+
 	/** 
 		WEBSOCKET CONFIG AND LISTENERS
 	**/
@@ -27,25 +46,6 @@ $(document).ready(function(){
 
 	socket.addEventListener("message", function(e) {
 	    // var msg = e.data;
-	});
-
-	/**
-		VARIABLES
-	**/
-	var artistlist = [];
-
-	//selector variables
-	var artistsearch = '#artistsearch';
-	var artisttabletbody = '#artisttable tbody';
-	var addartistform = '#addartistform';
-
-	//form variables (for Bootstrap validation)
-	var $form = $(addartistform);
-	var $successMsg = $(".alert");
-
-	//get data and populate table onload
-	getData(function( returnValue ){
-    	updateTable();
 	});
 
 	

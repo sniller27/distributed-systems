@@ -7,9 +7,9 @@ var count = 0;
 var clients = {};
 
 module.exports = function (app, request) {
-  var connection = request.accept('echo-protocol', request.origin);
 
-  
+  //assign connection
+  var connection = request.accept('echo-protocol', request.origin);
   // Specific id for this client & increment count
   var id = count++;
   // Store the connection method so we can loop through & contact all clients
