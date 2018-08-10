@@ -10,9 +10,8 @@
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.js"></script>
 	
 	<!-- own scripts -->
-	<link rel="stylesheet" href="css/Style.css">
-	<script src="js/ArtistHandler.js"></script>
-	<script src="js/Main.js"></script>
+	<link rel="stylesheet" href="public/css/Style.css">
+	<script src="public/js/Main.js"></script>
 
 </head>
 <body>
@@ -20,26 +19,26 @@
 		<div class="row">
 			<div class="col-sm-6">
 				<!-- form -->
-				<form id="addartistform" role="form">
+				<form id="addartistform" role="form" action="/" method="post">
 					<h2>Add new artist:</h2>
 
 					<div class="form-group">
 						<label for="artistnamefield">Artist name:</label>
-						<input type="text" class="form-control" id="artistnamefield" required>
+						<input type="text" class="form-control" id="artistnamefield" name="artistname" required>
 						<div class="help-block with-errors"></div>
 					</div>
 					<div class="form-group">
 						<label for="artistbirthplacefield">Artist birthplace:</label>
-						<input type="text" class="form-control" id="artistbirthplacefield" required>
+						<input type="text" class="form-control" id="artistbirthplacefield" name="artistbirthplace" required>
 						<div class="help-block with-errors"></div>
 					</div>
 					<div class="form-group">
 						<label for="artistbirthdatefield">Artist birthdate:</label>
-						<input type="date" class="form-control" id="artistbirthdatefield" required>
+						<input type="date" class="form-control" id="artistbirthdatefield" name="artistbirthdate" required>
 						<div class="help-block with-errors"></div>
 					</div>
 					<div class="checkbox">
-						<label><input type="checkbox" value="" id="artistfavoritecheckbox">Favorite artist</label>
+						<label><input type="checkbox" value="" id="artistfavoritecheckbox" name="artistfavorite">Favorite artist</label>
 					</div>
 
 					<input type="submit" value="Add artist" class="btn btn-success">
@@ -71,6 +70,7 @@
 							<th>Artist birthplace:</th>
 							<th>Artist birthdate:</th>
 							<th>Favorite artist:</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
